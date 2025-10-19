@@ -3,66 +3,104 @@ import java.util.function.Predicate;
 
 public class Main {
     public static void main(String[] args) {
-        // Étape 3 : Collections
+        // On crée nos collections pour la médiathèque
         List<Media> medias = new ArrayList<>();
         Set<Membre> membres = new HashSet<>();
         Map<Membre, List<Media>> emprunts = new HashMap<>();
 
-        // Créer des médias
-        Livre livre1 = new Livre("Le Petit Prince", 1943, "Saint-Exupéry", 120);
-        Livre livre2 = new Livre("1984", 2015, "Orwell", 300);
-        CD cd1 = new CD("Abbey Road", 1969, "The Beatles", 47);
-        CD cd2 = new CD("Thriller", 2012, "Michael Jackson", 42);
+        // Ajout de quelques mangas et albums
+        Livre manga1 = new Livre("One Piece", 1997, "Eiichiro Oda", 200);
+        Livre manga2 = new Livre("Attack on Titan", 2013, "Hajime Isayama", 180);
+        Livre manga3 = new Livre("Naruto", 1999, "Masashi Kishimoto", 192);
+        CD album1 = new CD("Thriller", 1982, "Mickael Jackson", 42);
 
-        medias.add(livre1);
-        medias.add(livre2);
-        medias.add(cd1);
-        medias.add(cd2);
 
-        // Créer des membres
-        Membre membre1 = new Membre("Alice", 1);
-        Membre membre2 = new Membre("Bob", 2);
-        membres.add(membre1);
-        membres.add(membre2);
+        medias.add(manga1);
+        medias.add(manga2);
+        medias.add(manga3);
+        medias.add(album1);
 
-        // Gérer les emprunts
-        membre1.emprunterMedia(livre1);
-        membre1.emprunterMedia(cd1);
-        membre2.emprunterMedia(livre2);
 
-        // Étape 4 : Méthodes génériques
-        System.out.println("=== Tous les médias ===");
+        // Inscription des membres
+        Membre adam = new Membre("Adam Sabor", 1);
+        membres.add(adam);
+
+
+        // Adam emprunte des mangas et un album
+        adam.emprunterMedia(manga1);
+        adam.emprunterMedia(album1);
+
+
+        // On remplit la map pour suivre qui a emprunté quoi
+        emprunts.put(adam, new ArrayList<>());
+
+
+        emprunts.get(adam).add(manga1);
+        emprunts.get(adam).add(album1);
+
+
+
+        // Affichage de tout le catalogue
+        System.out.println("=== Catalogue complet de la médiathèque ===");
         afficherListe(medias);
 
-        System.out.println("\n=== Médias publiés après 2010 ===");
-        List<Media> mediasRecents = filtrer(medias, m -> m.getAnneePublication() > 2010);
-        afficherListe(mediasRecents);
+        // Recherche des trucs récents (après 2010)
+        System.out.println("\n=== Sorties récentes (après 2010) ===");
+        List<Media> recent = filtrer(medias, m -> m.getAnneePublication() > 2010);
+        afficherListe(recent);
 
+        // Membres dont le nom commence par A (spoiler: y'en a qu'un)
         System.out.println("\n=== Membres dont le nom commence par A ===");
         List<Membre> membresA = filtrer(new ArrayList<>(membres), m -> m.getNom().startsWith("A"));
         afficherListe(membresA);
 
-        // Étape 5 : Tri
-        System.out.println("\n=== Tri par année décroissante puis titre ===");
+        // Tri par date de sortie (du plus récent au plus vieux)
+        System.out.println("\n=== Médias triés par date (récent → ancien) ===");
         medias.sort(Comparator.comparing(Media::getAnneePublication).reversed()
                 .thenComparing(Media::getTitre));
         afficherListe(medias);
 
-        System.out.println("\n=== Tri des livres par auteur puis titre ===");
-        List<Livre> livres = Arrays.asList(livre1, livre2);
-        livres.sort(Comparator.comparing((Livre l) -> l.getDescription().split(" de ")[1].split(",")[0])
+        // Tri des mangas par auteur
+        System.out.println("\n=== Mangas triés par auteur ===");
+        List<Livre> mangas = Arrays.asList(manga1, manga2, manga3);
+        mangas.sort(Comparator.comparing((Livre l) -> l.getDescription().split(" de ")[1].split(",")[0])
                 .thenComparing(Livre::getTitre));
-        afficherListe(livres);
+        afficherListe(mangas);
+
+        // Test de la copie de collection
+        System.out.println("\n=== Copie du catalogue ===");
+        List<Media> backup = new ArrayList<>();
+        copierCollection(medias, backup);
+        System.out.println("Backup créé avec " + backup.size() + " éléments");
+        afficherListe(backup);
+
+        // Voir tous les médias actuellement empruntés (sans doublon)
+        System.out.println("\n=== Médias actuellement empruntés ===");
+        Set<Media> enCours = obtenirMediasEmpruntes(emprunts);
+        System.out.println("Il y a " + enCours.size() + " médias différents en circulation");
+        afficherListe(new ArrayList<>(enCours));
+
+        // Filtrer pour avoir que les mangas
+        System.out.println("\n=== Uniquement les mangas ===");
+        List<Media> justMangas = filtrer(medias, m -> m instanceof Livre);
+        System.out.println("On a " + justMangas.size() + " mangas en stock");
+        afficherListe(justMangas);
+
+        // Et maintenant que les albums
+        System.out.println("\n=== Uniquement les albums ===");
+        List<Media> justAlbums = filtrer(medias, m -> m instanceof CD);
+        System.out.println("On a " + justAlbums.size() + " albums en stock");
+        afficherListe(justAlbums);
     }
 
-    // Méthode générique pour afficher une liste
+    // Affiche n'importe quelle liste
     public static <T> void afficherListe(List<T> liste) {
         for (T element : liste) {
             System.out.println(element);
         }
     }
 
-    // Méthode générique pour filtrer une liste
+    // Filtre une liste selon un critère
     public static <T> List<T> filtrer(List<T> liste, Predicate<T> critere) {
         List<T> resultat = new ArrayList<>();
         for (T element : liste) {
@@ -71,5 +109,24 @@ public class Main {
             }
         }
         return resultat;
+    }
+
+    // Copie les éléments d'une collection vers une autre
+    public static <T> void copierCollection(Collection<T> source, Collection<T> destination) {
+        for (T element : source) {
+            destination.add(element);
+        }
+    }
+
+    // Récupère tous les médias empruntés sans doublons
+    public static Set<Media> obtenirMediasEmpruntes(Map<Membre, List<Media>> emprunts) {
+        Set<Media> mediasEmpruntes = new HashSet<>();
+
+        // On parcourt tous les emprunts de tous les membres
+        for (List<Media> listeEmprunts : emprunts.values()) {
+            mediasEmpruntes.addAll(listeEmprunts);
+        }
+
+        return mediasEmpruntes;
     }
 }
