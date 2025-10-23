@@ -22,12 +22,12 @@ public class Membre {
         return id;
     }
 
-
+    // Emprunter un média
     public void emprunterMedia(Media media) {
         mediasEmpruntes.add(media);
     }
 
-
+    // toString
     @Override
     public String toString() {
         return "Membre {" + nom + ", " + id + "}";

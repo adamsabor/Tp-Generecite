@@ -14,15 +14,14 @@ public class Main {
         Livre manga3 = new Livre("Naruto", 1999, "Masashi Kishimoto", 192);
         CD album1 = new CD("Thriller", 1982, "Mickael Jackson", 42);
 
-
         medias.add(manga1);
         medias.add(manga2);
         medias.add(manga3);
         medias.add(album1);
 
-
         // Inscription des membres
         Membre adam = new Membre("Adam Sabor", 1);
+
         membres.add(adam);
 
 
@@ -39,7 +38,6 @@ public class Main {
         emprunts.get(adam).add(album1);
 
 
-
         // Affichage de tout le catalogue
         System.out.println("=== Catalogue complet de la médiathèque ===");
         afficherListe(medias);
@@ -49,7 +47,7 @@ public class Main {
         List<Media> recent = filtrer(medias, m -> m.getAnneePublication() > 2010);
         afficherListe(recent);
 
-        // Membres dont le nom commence par A (spoiler: y'en a qu'un)
+        // Membres dont le nom commence par A
         System.out.println("\n=== Membres dont le nom commence par A ===");
         List<Membre> membresA = filtrer(new ArrayList<>(membres), m -> m.getNom().startsWith("A"));
         afficherListe(membresA);
@@ -91,6 +89,41 @@ public class Main {
         List<Media> justAlbums = filtrer(medias, m -> m instanceof CD);
         System.out.println("On a " + justAlbums.size() + " albums en stock");
         afficherListe(justAlbums);
+
+        // ========== ÉTAPE 7 - BONUS ==========
+
+        // Test du polymorphisme avec afficherDetails()
+        System.out.println("\n=== Test polymorphisme : afficherDetails() ===");
+        for (Media m : medias) {
+            m.afficherDetails();
+        }
+
+        // Test de l'interface Empruntable
+        System.out.println("\n=== Test interface Empruntable ===");
+
+        manga1.emprunter();
+        album1.emprunter();
+        manga1.emprunter(); // Essayer de l'emprunter une 2e fois
+
+        System.out.println("\nStatut des médias :");
+        System.out.println("One Piece disponible ? " + manga1.estDisponible());
+        System.out.println("Thriller disponible ? " + album1.estDisponible());
+        System.out.println("Attack on Titan disponible ? " + manga2.estDisponible());
+
+        System.out.println();
+        manga1.retourner();
+        System.out.println("One Piece disponible ? " + manga1.estDisponible());
+
+        // Liste d'Empruntable
+        System.out.println("\n=== Manipulation via l'interface ===");
+        List<Empruntable> empruntables = new ArrayList<>();
+        empruntables.add(manga2);
+
+
+        System.out.println("Emprunter tout en une fois :");
+        for (Empruntable e : empruntables) {
+            e.emprunter();
+        }
     }
 
     // Affiche n'importe quelle liste
@@ -122,7 +155,6 @@ public class Main {
     public static Set<Media> obtenirMediasEmpruntes(Map<Membre, List<Media>> emprunts) {
         Set<Media> mediasEmpruntes = new HashSet<>();
 
-        // On parcourt tous les emprunts de tous les membres
         for (List<Media> listeEmprunts : emprunts.values()) {
             mediasEmpruntes.addAll(listeEmprunts);
         }

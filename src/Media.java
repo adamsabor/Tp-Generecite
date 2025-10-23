@@ -2,13 +2,13 @@ public abstract class Media {
     private String titre;
     private int anneePublication;
 
-    // Constructeur absract vu en cours
+    // Constructeur par défaut
     public Media() {
         this.titre = "";
         this.anneePublication = 0;
     }
 
-    // Constructeur paramétre
+    // Constructeur paramétré
     public Media(String titre, int anneePublication) {
         this.titre = titre;
         this.anneePublication = anneePublication;
@@ -23,12 +23,17 @@ public abstract class Media {
         return anneePublication;
     }
 
-    // Méthode abstraite generiicité
+    // Méthode abstraite (à redéfinir dans les classes filles)
     public abstract String getDescription();
 
     // toString
     @Override
     public String toString() {
         return titre + " (" + anneePublication + ")";
+    }
+
+   git
+    public void afficherDetails() {
+        System.out.println(this.toString() + " - " + this.getDescription());
     }
 }
