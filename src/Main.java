@@ -8,11 +8,11 @@ public class Main {
         Set<Membre> membres = new HashSet<>();
         Map<Membre, List<Media>> emprunts = new HashMap<>();
 
-        // Ajout de quelques mangas et albums
+
         Livre manga1 = new Livre("One Piece", 1997, "Eiichiro Oda", 200);
         Livre manga2 = new Livre("Attack on Titan", 2013, "Hajime Isayama", 180);
         Livre manga3 = new Livre("Naruto", 1999, "Masashi Kishimoto", 192);
-        CD album1 = new CD("Thriller", 1982, "Mickael Jackson", 42);
+        CD album1 = new CD("daft punk", 2013, "get lucky", 42);
 
         medias.add(manga1);
         medias.add(manga2);

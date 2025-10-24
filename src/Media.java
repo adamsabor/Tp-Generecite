@@ -32,7 +32,6 @@ public abstract class Media {
         return titre + " (" + anneePublication + ")";
     }
 
-   git
     public void afficherDetails() {
         System.out.println(this.toString() + " - " + this.getDescription());
     }
